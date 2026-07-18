@@ -2,10 +2,15 @@ CREATE TABLE IF NOT EXISTS students (
 
     id SERIAL PRIMARY KEY,
 
-    name VARCHAR(100),
+    name VARCHAR(100) NOT NULL,
 
-    age INT,
+    age INTEGER NOT NULL,
 
-    course VARCHAR(100)
+    course VARCHAR(100) NOT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 
 );
+
+CREATE INDEX IF NOT EXISTS idx_student_name
+ON students(name);

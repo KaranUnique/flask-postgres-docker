@@ -1,6 +1,67 @@
 # Student Management API
 
-A Flask REST API using PostgreSQL and Docker.
+A RESTful Student Management API built with Flask and PostgreSQL.
+
+---
+
+## Features
+
+- Create Student
+- Read Student
+- Update Student
+- Delete Student
+- PostgreSQL Database
+- Docker Support
+- Docker Compose
+- Environment Variables
+- Persistent Storage using Docker Volume
+
+---
+
+## Project Structure
+
+```
+app
+ ├── repositories
+ │      memory_repository.py
+ │      postgres_repository.py
+ │      repository.py
+ ├── services
+ ├── routes
+ ├── db.py
+ ├── models.py
+ └── app.py
+```
+
+---
+
+## Architecture
+
+This project follows the Repository Pattern.
+
+Initially the project used **MemoryRepository**.
+
+For this assignment only **repository.py** was changed to use **PostgresRepository**.
+
+The Service Layer and Routes were not modified.
+
+This demonstrates separation of concerns and makes storage easily replaceable.
+
+---
+
+## Environment Variables
+
+Create a `.env` file.
+
+```
+DB_HOST=db
+DB_PORT=5432
+DB_NAME=studentdb
+DB_USER=postgres
+DB_PASSWORD=postgres
+```
+
+---
 
 ## Run
 
@@ -8,25 +69,49 @@ A Flask REST API using PostgreSQL and Docker.
 docker compose up --build
 ```
 
-API runs on:
+App
 
 ```
 http://localhost:5000
 ```
 
-## Endpoints
+---
 
-GET /students
+## API Endpoints
 
-GET /students/{id}
+GET
 
-POST /students
+```
+/students
+```
 
-PUT /students/{id}
+GET
 
-DELETE /students/{id}
+```
+/students/{id}
+```
 
-### Example JSON
+POST
+
+```
+/students
+```
+
+PUT
+
+```
+/students/{id}
+```
+
+DELETE
+
+```
+/students/{id}
+```
+
+---
+
+## Example JSON
 
 ```json
 {
@@ -36,22 +121,48 @@ DELETE /students/{id}
 }
 ```
 
-Persistence Test
+---
 
-1. Started the application using:
+## Persistence Test
 
-   docker compose up
+Steps performed
 
-2. Added a student using POST /students
+1. Started the application using
 
-3. Stopped everything:
+```
+docker compose up --build
+```
 
-   docker compose down
+2. Added a student using POST.
 
-4. Started again:
+3. Verified using GET.
 
-   docker compose up
+4. Stopped containers
 
-5. Called GET /students
+```
+docker compose down
+```
 
-6. Verified the student record was still present because PostgreSQL data is stored in a Docker volume.
+5. Started again
+
+```
+docker compose up
+```
+
+6. Retrieved the student again.
+
+Result
+
+The student data was still present.
+
+This confirms Docker Volume persistence.
+
+---
+
+## Technologies
+
+- Flask
+- PostgreSQL
+- Docker
+- Docker Compose
+- Python

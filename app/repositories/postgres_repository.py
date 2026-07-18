@@ -8,7 +8,11 @@ class PostgresRepository:
         conn = get_connection()
         cur = conn.cursor()
 
-        cur.execute("SELECT * FROM students ORDER BY id")
+        cur.execute("""
+            SELECT id, name, age, course
+            FROM students
+            ORDER BY id
+        """)
 
         rows = cur.fetchall()
 
@@ -17,12 +21,12 @@ class PostgresRepository:
 
         return [
             {
-                "id": r[0],
-                "name": r[1],
-                "age": r[2],
-                "course": r[3]
+                "id": row[0],
+                "name": row[1],
+                "age": row[2],
+                "course": row[3]
             }
-            for r in rows
+            for row in rows
         ]
 
     def get_by_id(self, student_id):
@@ -31,7 +35,11 @@ class PostgresRepository:
         cur = conn.cursor()
 
         cur.execute(
-            "SELECT * FROM students WHERE id=%s",
+            """
+            SELECT id, name, age, course
+            FROM students
+            WHERE id=%s
+            """,
             (student_id,)
         )
 
@@ -57,8 +65,8 @@ class PostgresRepository:
 
         cur.execute(
             """
-            INSERT INTO students(name,age,course)
-            VALUES(%s,%s,%s)
+            INSERT INTO students(name, age, course)
+            VALUES (%s, %s, %s)
             RETURNING id
             """,
             (
@@ -111,11 +119,18 @@ class PostgresRepository:
         cur = conn.cursor()
 
         cur.execute(
-            "DELETE FROM students WHERE id=%s",
+            """
+            DELETE FROM students
+            WHERE id=%s
+            """,
             (student_id,)
         )
+
+        deleted = cur.rowcount > 0
 
         conn.commit()
 
         cur.close()
         conn.close()
+
+        return deleted

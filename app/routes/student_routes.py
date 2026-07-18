@@ -12,38 +12,58 @@ def get_students():
     return jsonify(service.get_students())
 
 
-@student_bp.route("/students/<int:id>", methods=["GET"])
-def get_student(id):
+@student_bp.route("/students/<int:student_id>", methods=["GET"])
+def get_student(student_id):
 
-    student = service.get_student(id)
+    student = service.get_student(student_id)
 
-    if student:
-        return jsonify(student)
+    if student is None:
+        return jsonify({"message": "Student not found"}), 404
 
-    return jsonify({"message": "Student not found"}), 404
+    return jsonify(student)
 
 
 @student_bp.route("/students", methods=["POST"])
 def create_student():
 
-    student = service.create_student(request.json)
+    data = request.get_json()
+
+    if not data:
+        return jsonify({"message": "Request body is required"}), 400
+
+    required_fields = ["name", "age", "course"]
+
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"message": f"{field} is required"}), 400
+
+    student = service.create_student(data)
 
     return jsonify(student), 201
 
 
-@student_bp.route("/students/<int:id>", methods=["PUT"])
-def update_student(id):
+@student_bp.route("/students/<int:student_id>", methods=["PUT"])
+def update_student(student_id):
 
-    student = service.update_student(id, request.json)
+    data = request.get_json()
+
+    if not data:
+        return jsonify({"message": "Request body is required"}), 400
+
+    student = service.update_student(student_id, data)
+
+    if student is None:
+        return jsonify({"message": "Student not found"}), 404
 
     return jsonify(student)
 
 
-@student_bp.route("/students/<int:id>", methods=["DELETE"])
-def delete_student(id):
+@student_bp.route("/students/<int:student_id>", methods=["DELETE"])
+def delete_student(student_id):
 
-    service.delete_student(id)
+    deleted = service.delete_student(student_id)
 
-    return jsonify({
-        "message": "Student deleted"
-    })
+    if not deleted:
+        return jsonify({"message": "Student not found"}), 404
+
+    return jsonify({"message": "Student deleted successfully"})
